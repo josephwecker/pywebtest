@@ -1,0 +1,118 @@
+h2. pywebtest
+
+| Author | Joseph Wecker <joseph.wecker@gmail.com> |
+| Version | 0 still |
+| Status | Specs, exploratory programming, etc. |
+
+h3. Summary
+
+Inspired largely by pyccuracy, it aims to be pyccuracy-like only with more use-case/story like syntax, the ability to have more complex dependencies and constructs, no dependency on selenium (will use spynner (= pyqt webkit) instead), and will be very, very fast.
+
+It can start as a brief overview of new functionality, but then also work toward complete tests as alternate paths are considered and written in, etc.
+
+h3. Basic "story" acceptance test
+
+A basic story describes some sequence of events that a user of the system (whether a user, anonymous-user, admin, etc.) would follow to get something done.  Ideally we'll write stories that really get to the core of what our users will do often.  Stories can be used as building blocks for bigger stories, as will be shown here.  So, first example:
+
+<pre>
+Story 1: Shopper logs in
+-------------------------------
+  As a Shopper:
+    If I go to http://www.spreezio.com
+    And I enter 'testuser' in the username box
+    And enter 'mypasswd' in the password box
+    And press 'enter' on the keyboard
+    Then I should see 'Welcome Awesome User'
+</pre>
+
+Main points about the example above:
+* "Story 1: Shopper logs in" - the title of the story. Later in other stories this can be referenced either as "story 1" or "shopper logs in" (case is irrelevant).
+* First thing is to define who will be doing the sequence of actions- in this case "shopper."
+* Next are the steps.  They need to be indented slightly from the "As a ..." sentence.
+* In the actions there isn't actually much magic going on.  Phrases/words like "if i", "and", and "then I should" are basically ignored.  But I highly recommend not just leaving them off.  The major benefit here is that it is readable and can even be published!
+* There are a finite number of verbs you can use- but basically anything a user would need to do to a web page.
+
+h3. Story that uses another story
+
+<pre>
+Story 1: Shopper logs in
+-------------------------------
+  As a Shopper:
+    If I go to http://www.spreezio.com
+    And I enter 'testuser' in the username box
+    And enter 'mypasswd' in the password box
+    And press 'enter' on the keyboard
+    Then I should see 'Welcome Awesome User'
+
+ Story: Shopper logs out
+--------------------------
+  Assuming:
+    Shopper logs in
+  Then, as a shopper:
+    If I click on the 'logout' link
+    I should not see 'Awesome User' anywhere
+    And I should see 'login'
+
+</pre>
+
+More points:
+* Story 1 is copied from above
+* The title for the second story has some anomolies: Notice I omitted the story number.  This is fine, but it means that I will only be able to reference it as "shopper logs out" in the future, instead of "story 2".  Also I indented it ever so slightly just to prove to you guys that I can.
+* There's an "assuming" section now- this is where you can have the script run the earlier story as a setup (basically) for the story it's about to run.  In this case it will run story 1 before moving on to the rest of the story.  It could have been written just as easily as "Assuming: Story 1 goes well" (again, the 'goes well' part is totally ignored- it's for readability).
+* In the actions you see the new verb "not see" (the 'anywhere' at the end of the sentence is ignored)
+
+
+h3. Alternate actions
+
+In general you want your main story to have the most common actions to get the job done- your best guess at what they will do to, for example, log in.
+
+The acceptance test will run the main actions to decide whether or not that feature is complete.  However, it is often desirable to have more detailed testing that tests some alternative ways of doing things.  Here is an example for logging in:
+
+
+<pre>
+Story 1: Shopper logs in
+-------------------------------
+  As a Shopper:
+    If I go to http://www.spreezio.com
+      or I go to spreezio.com
+      or I go to www.spreezio.com
+      or I go to https://www.spreezio.com
+    And I enter 'testuser' in the username box
+    And enter 'mypasswd' in the password box
+    And press 'enter' on the keyboard
+      Or I click the 'log in' button
+      Or
+        I press 'tab' on the keyboard
+        Then I press 'space' on the keyboard
+    Then I should see 'Welcome Awesome User'
+</pre>
+
+* You can see alternate actions indented and using the "or" (in this case the 'or' is significant, but again, as you see lower in the actions, case does not matter).
+* You can see that an or statement can be followed by a group of actions, just indent them under the 'or'
+
+So here the automated build script / online acceptance tester will try the main actions, but then it will also do all permutations using the alternate actions.
+
+The downside is that it can really start to clutter up the readability of your story with esoteric details.  Because of this, here is an alternate way of writing that same story:
+
+<pre>
+Story 1: Shopper logs in
+-------------------------------
+  As a Shopper:
+    If I go to http://www.spreezio.com [1]
+    And I enter 'testuser' in the username box
+    And enter 'mypasswd' in the password box
+    And press 'enter' on the keyboard [2]
+    Then I should see 'Welcome Awesome User'
+
+Alternates
+~~~~~~~~~~
+  [1] I go to spreezio.com
+  [1] I go to www.spreezio.com
+  [1] I go to https://www.spreezio.com
+  [2] I click the 'log in' button
+  [2] I press 'tab' on the keyboard
+      Then I press 'space' on the keyboard
+
+</pre>
+
+As you can see, much cleaner.

@@ -1,0 +1,49 @@
+=====================================================
+ StoryBoard 1: Coming to the site for the first time
+=====================================================
+As a shopper
+I want to ....
+So that ....
+
+Story 1: Shopper logs in
+-------------------------------
+  As a Shopper:
+    If I go to http://spreezio.com
+    And I enter 'testuser' in the username box
+    And enter 'mypasswd' in the password box
+    And press 'enter' on the keyboard
+      (Or I press the 'login' button)
+    Then I should see 'Welcome Awesome User'
+
+Story 2: Merchant logs in
+--------------------------
+  As a Merchant:
+    If I go to http://spreezio.com
+    And click the 'merchants' link
+    And enter 'testmerchant' in the username box
+    And I enter 'merchpasswd' in the password box
+    And then I press 'enter' on the keyboard
+      (Or I press the 'login' button)
+      (Or
+        I press 'tab' on the keyboard
+        and press 'space' on the keyboard)
+    Then I should see 'Welcome, Awesome Merchant!'
+
+Story 'Map': I see a map of some enticing deals
+when I first log in.
+--------------------------------------------------
+  First:
+    Shopper logs in
+    And story 2 goes well
+  As a Merchant:
+    If I go to spreezio.com/blah.html
+    and enter 'heya' in the main box
+    and press the 'go' button
+  And then as a shopper:
+    I go to spreezio.com/blah2.html
+    Then I should see 'heya' on the page
+  And as a merchant:
+    If I wait for 3 more seconds
+    I should see 'message accepted' on the page
+  
+
